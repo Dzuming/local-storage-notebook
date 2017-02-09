@@ -15,15 +15,15 @@ app-note-list {
             li {
                 padding: 5px;
                 span {
+                    cursor: pointer;
                     font-size: 14px;
                 }
                 .delete {
+                    cursor: pointer;
+                    margin-left: 20px;
                     float: right;
                 }
                 list-style-type: none;
-            }
-            .delete {
-                margin-left: 20px;
             }
         }
     }
