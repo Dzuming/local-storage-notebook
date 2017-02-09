@@ -18,11 +18,11 @@ import 'rxjs/add/observable/fromEvent';
 })
 
 export class NoteListComponent implements OnInit, AfterViewInit {
-  public noteObject: string = "noteObject";
+  public noteObject = 'noteObject';
   public html = [];
   public noteForm: FormGroup;
   public Description: string;
-  public nameOnClick: string = "";
+  public nameOnClick = "";
   private formErrors = {
     'Name': '',
     'Description': '',
@@ -37,8 +37,8 @@ export class NoteListComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
 
-    this.clickableElementToFind()
-    this.delete()
+    this.clickableElementToFind();
+    this.delete();
   }
   public buildForm(): void {
     this.noteForm = this.formBuilder.group({
@@ -55,7 +55,7 @@ export class NoteListComponent implements OnInit, AfterViewInit {
     });
   }
   save() {
-    let value: Array<Object> = JSON.parse(this.getData()) || [];
+    const value: Array<Object> = JSON.parse(this.getData()) || [];
     this.removeList();
     this.onSave(value);
 
@@ -67,34 +67,35 @@ export class NoteListComponent implements OnInit, AfterViewInit {
     }
     if (!this.nameOnClick) {
       value.push([{
-        "name": this.noteForm.value.Name,
-        "children": [],
-        "Description": this.noteForm.value.Description
-      }])
+        'name': this.noteForm.value.Name,
+        'children': [],
+        'Description': this.noteForm.value.Description
+      }]);
     }
     value.map((val, index) => {
       if (val[0].name === this.nameOnClick && this.nameOnClick !== "") {
         val[0].children.push([{
-          "name": this.noteForm.value.Name,
-          "children": [],
-          "Description": this.noteForm.value.Description
-        }])
+          'name': this.noteForm.value.Name,
+          'children': [],
+          'Description': this.noteForm.value.Description
+        }]);
       } else if (val[0].children[0] && val[0].name !== this.nameOnClick) {
-        this.onSave(val[0].children)
+        this.onSave(val[0].children);
       }
-    })
+    });
     this.localStorageService.saveItem(this.noteObject, value);
     this.show(JSON.parse(this.getData()));
-    this.updateList()
+    this.updateList();
   }
   delete() {
-    let remove = this.elementRef.nativeElement.querySelectorAll('.delete');
+    const remove = this.elementRef.nativeElement.querySelectorAll('.delete');
     let click = Observable.fromEvent(remove, 'click');
-    let subscription = click.subscribe(
+    const subscription = click.subscribe(
       (e: any) => {
-        this.nameOnClick = e.currentTarget.previousSibling.innerHTML.split("<ul>")[0];
-        this.onDelete(JSON.parse(this.getData()))
-      })
+        this.nameOnClick = e.currentTarget.previousSibling.innerHTML.split('<ul>')[0];
+        this.onDelete(JSON.parse(this.getData()));
+      });
+
   }
   onDelete(value) {
     if (this.html) {
@@ -108,10 +109,10 @@ export class NoteListComponent implements OnInit, AfterViewInit {
       if (val[0].name === this.nameOnClick) {
         val.splice(index, 1);
       } else if (val[0].children[0] && val[0].name !== this.nameOnClick) {
-        this.onDelete(val[0].children)
+        this.onDelete(val[0].children);
       }
-    })
-    this.localStorageService.saveItem(this.noteObject, value)
+    });
+    this.localStorageService.saveItem(this.noteObject, value);
     this.updateList();
     this.delete();
   }
@@ -120,48 +121,48 @@ export class NoteListComponent implements OnInit, AfterViewInit {
       if (val[0].name === this.nameOnClick) {
         this.Description = val[0].Description;
       } else if (val[0].children[0] && val[0].name !== this.nameOnClick) {
-        this.find(val[0].children)
+        this.find(val[0].children);
       }
-    })
+    });
   }
   clickableElementToFind() {
-    let span = this.elementRef.nativeElement.querySelectorAll('span');
+    const span = this.elementRef.nativeElement.querySelectorAll('span');
     let click = Observable.fromEvent(span, 'click');
-    let subscription = click.subscribe(
+    const subscription = click.subscribe(
       (e: any) => {
-        this.nameOnClick = e.currentTarget.innerHTML.split("<ul>")[0];
+        this.nameOnClick = e.currentTarget.innerHTML.split('<ul>')[0];
         this.find(JSON.parse(this.getData()));
       }
-    )
+    );
 
   }
   updateList() {
-    let el = document.querySelector('app-note-list')
-    el.insertAdjacentHTML('afterbegin', this.html.join(''))
+    const el = document.querySelector('app-note-list');
+    el.insertAdjacentHTML('afterbegin', this.html.join(''));
   }
   removeList() {
-    let ul = document.querySelector('ul')
+    const ul = document.querySelector('ul');
     if (ul) {
       ul.parentNode.removeChild(ul);
     }
   }
   show(element) {
     if (!element) {
-      return
+      return;
     }
     this.html.push('<ul>');
     element.map((val) => {
       this.html.push('<li><i class="unroll">S</i><span>' + val[0].name);
       this.html.push('</span><i class="delete">X</i>');
       if (val[0].children[0]) {
-        this.show(val[0].children)
+        this.show(val[0].children);
       }
       this.html.push('</li>');
-    })
+    });
     this.html.push('</ul>');
 
   }
   getData() {
-    return this.localStorageService.getItem(this.noteObject)
+    return this.localStorageService.getItem(this.noteObject);
   }
 }
