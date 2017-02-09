@@ -31,8 +31,8 @@ export class NoteListComponent implements OnInit, AfterViewInit {
     el.insertAdjacentHTML('afterbegin', this.html.join(''))
   }
   ngAfterViewInit() {
-    
-    this.testObserver()
+
+    this.clickableElementToFind()
 
   }
   public buildForm(): void {
@@ -86,39 +86,23 @@ export class NoteListComponent implements OnInit, AfterViewInit {
     element.map((val) => {
       if (val[0].name === this.nameOnClick) {
         this.Description = val[0].Description;
-      } else if (val[0].children[0] && val[0].name !== "dawid") {
+      } else if (val[0].children[0] && val[0].name !== this.nameOnClick) {
         this.find(val[0].children)
       }
     })
   }
-  click() {
-    this.test()
-    
-    return 
-  }
-  testObserver() {
+  clickableElementToFind() {
     let li = this.elementRef.nativeElement.querySelectorAll('li')
     let click = Observable.fromEvent(li, 'click');
-    let subscription  = click.subscribe(
-      (e:any) => {
-              this.nameOnClick = e.currentTarget.innerHTML;
-        this.find(JSON.parse(this.getData()))},
-      error => console.log("eee"),
-      () => console.log("ecd")
-    )
-  }
-  test(): Observable<any> {
-    let li = this.elementRef.nativeElement.querySelectorAll('li')
-    return this.elementRef.nativeElement.addEventListener('click', function (e) {
-      
-      // this.find();
-      // console.log("test")
-    }, false);
-
+    let subscription = click.subscribe(
+      (e: any) => {
+          this.nameOnClick = e.currentTarget.innerText;
+        this.find(JSON.parse(this.getData()))
+      })
   }
   show(element) {
     this.html.push('<ul>');
-     element.map((val) => {
+    element.map((val) => {
       this.html.push('<li>' + val[0].name);
       if (val[0].children[0]) {
         this.show(val[0].children)
