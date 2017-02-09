@@ -1,13 +1,52 @@
 /* You can add global styles to this file, and also import other style files */
-ul {
-    width:250px;
-li {
-    list-style-type: none;
-}
-.delete{
-    margin-left:20px;
-}
-.unroll{
-    margin-right:20px;
-}
+
+$border-box-width: 500px;
+$border: 1px solid black;
+$margin-stairs: 550px;
+app-note-list {
+    #note-list {
+        margin-left: $margin-stairs - 150px;
+        color: white;
+        background-color: #201858;
+        width: $border-box-width;
+        border: $border;
+        ul {
+            width: 250px;
+            li {
+                padding: 5px;
+                span {
+                    font-size: 14px;
+                }
+                .delete {
+                    float: right;
+                }
+                list-style-type: none;
+            }
+            .delete {
+                margin-left: 20px;
+            }
+        }
+    }
+    form {
+        margin-left: $margin-stairs - 50px;
+        background-color: #847EB1;
+        width: $border-box-width;
+        border: $border;
+        h3 {
+            span {
+                color: red
+            }
+        }
+    }
+    #description {
+        margin-left: $margin-stairs - 100px;
+        background-color: #5B5393;
+        font-style: monospace;
+        border: $border;
+        width: $border-box-width;
+        height: 100px;
+        pre {
+            font-size: 16px;
+        }
+    }
 }
