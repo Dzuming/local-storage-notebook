@@ -145,11 +145,11 @@ export class NoteListComponent implements OnInit, DoCheck, AfterViewInit {
     value.map((val, index) => {
       if (val[0].name === this.nameOnClick) {
         value[index].splice(index, 1);
-        this.nameOnClick = 'Not available'
+        this.nameOnClick = 'Not available';
       }
       if (val[0].name === this.nameOnClick) {
         val.splice(index, 1);
-        this.nameOnClick = 'Not available'
+        this.nameOnClick = 'Not available';
       } else if (val[0].children[0] && val[0].name !== this.nameOnClick) {
         this.onDelete(val[0].children);
       }
