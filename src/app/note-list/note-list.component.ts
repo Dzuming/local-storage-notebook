@@ -1,4 +1,11 @@
 //On click = take object name
+//TODO - resetowanie wyboru;
+//TODO - Odświeżanie;
+//TODO - Przy pustym jsonie wyskakuje formError
+//TODO - Problem z wyborem rodzica
+//TODO - Usuwanie z listy
+//TODO - rozwijanie listy po kliknieciu na przycisk
+
 import { Component, OnInit, ElementRef, Renderer, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalStorageService } from '../shared/local-storage.service';
@@ -7,7 +14,6 @@ import 'rxjs/add/observable/fromEvent';
 @Component({
   selector: 'app-note-list',
   templateUrl: './note-list.component.html',
-  styleUrls: ['./note-list.component.css'],
   providers: [LocalStorageService]
 })
 
@@ -64,23 +70,41 @@ export class NoteListComponent implements OnInit, AfterViewInit {
     //   }
     //   console.log(prop)
     // }
-    value[0][0].children.push([{
-      "name": this.noteForm.value.Name,
-      "children": {},
-      "Description": this.noteForm.value.Description
-    }])
-    // value.push([{
+    // value[0][0].children.push([{
     //   "name": this.noteForm.value.Name,
     //   "children": {},
     //   "Description": this.noteForm.value.Description
     // }])
-    this.localStorageService.saveItem(this.noteObject, value)
+    this.onSave(value);
+
     // let ul = document.querySelector('ul')
     //   ul.parentNode.removeChild(ul);
     //   if (ul.innerHTML !== "") {
     //     this.show(JSON.parse(this.getData()))
     //   }
 
+  }
+  onSave(value) {
+    if (!this.nameOnClick) {
+      value.push([{
+        "name": this.noteForm.value.Name,
+        "children": [],
+        "Description": this.noteForm.value.Description
+      }])
+    }
+    value.map((val, index) => {
+      if (val[0].name === this.nameOnClick) {
+        val[0].children.push([{
+          "name": this.noteForm.value.Name,
+          "children": [],
+          "Description": this.noteForm.value.Description
+        }])
+      } else if (val[0].children[0] && val[0].name !== this.nameOnClick) {
+        this.onSave(val[0].children)
+      }
+    })
+    console.log(value)
+    this.localStorageService.saveItem(this.noteObject, value)
   }
   find(element) {
     element.map((val) => {
@@ -92,13 +116,24 @@ export class NoteListComponent implements OnInit, AfterViewInit {
     })
   }
   clickableElementToFind() {
-    let li = this.elementRef.nativeElement.querySelectorAll('li')
+    let li = this.elementRef.nativeElement.querySelectorAll('li');
+    let clickFlag: boolean = false;
     let click = Observable.fromEvent(li, 'click');
     let subscription = click.subscribe(
       (e: any) => {
-          this.nameOnClick = e.currentTarget.innerText;
-        this.find(JSON.parse(this.getData()))
+        if (!clickFlag) {
+          this.nameOnClick = e.currentTarget.innerHTML.split("<ul>")[0];
+          console.log(this.nameOnClick.split("<ul>")[0])
+          this.find(JSON.parse(this.getData()))
+          return clickFlag = true;
+        } else {
+
+
+          return clickFlag = false;
+        }
+
       })
+
   }
   show(element) {
     this.html.push('<ul>');
