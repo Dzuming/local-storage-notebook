@@ -1,0 +1,10 @@
+//TODO - validate error info;
+//TODO - Update list
+//TODO - Fix problem with Delete from list
+//TODO - After click list of nodes
+//TODO - Use id to manipulate json
+//TODO - performance problem
+//TODO - Move code to services, refactor some functions
+//TOOD - Unit testing
+//TODO - CHange page layout
+//TODO - Add responsive layout

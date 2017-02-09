@@ -1,14 +1,3 @@
-
-//TODO - resetowanie wyboru;
-//TODO - form clear
-//TODO - Przy pustym jsonie wyskakuje formError
-//TODO - Usuwanie z listy
-//TODO - rozwijanie listy po kliknieciu na przycisk
-//TODO - walidacja danych
-//TODO - Bug z usunieciem ostatniego
-//TODO - Add id
-//TODO - performance problem
-//Show to another function
 import { Component, OnInit, ElementRef, DoCheck, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalStorageService } from '../shared/local-storage.service';
@@ -26,6 +15,18 @@ export class NoteListComponent implements OnInit, DoCheck, AfterViewInit {
   public noteForm: FormGroup;
   public Description = 'Not available';
   public nameOnClick = 'Not available';
+  private validationMessages = {
+        'Name': {
+            'required': 'Description is required.',
+            'minlength': 'Description must be at least 4 characters long.',
+            'maxlength': 'Description cannot be more than 24 characters long.'
+        },
+        'Description': {
+            'required': 'Description is required.',
+            'minlength': 'Description must be at least 4 characters long.',
+            'maxlength': 'Description cannot be more than 24 characters long.'
+        }
+    };
   private formErrors = {
     'Name': '',
     'Description': '',
@@ -62,8 +63,39 @@ export class NoteListComponent implements OnInit, DoCheck, AfterViewInit {
         Validators.required,
       ]]
     });
-  }
+    this.noteForm.valueChanges
+            .subscribe(data => this.onValueChanged(data));
 
+        this.onValueChanged();
+
+  }
+  public onValueChanged(data?: any) {
+        if (!this.noteForm) { return; }
+        const form = this.noteForm;
+
+        for (const field in this.formErrors) {
+            if (this.formErrors.hasOwnProperty(field)) {
+                this.formErrors[field] = '';
+                this.checkErrorValidate(form, field);
+            }
+        }
+    }
+
+    public checkErrorValidate(form, field) {
+        const control = form.get(field);
+        if (control && control.dirty && !control.valid) {
+            this.addError(control, field);
+        }
+    }
+
+    public addError(control, field) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+            if (control.errors.hasOwnProperty(key)) {
+                this.formErrors[field] += messages[key] + ' ';
+            }
+        }
+    }
   save() {
     const value: Array<Object> = JSON.parse(this.getData()) || [];
     this.onSave(value);
@@ -96,6 +128,7 @@ export class NoteListComponent implements OnInit, DoCheck, AfterViewInit {
     }
     this.show(JSON.parse(this.getData()));
     this.updateList();
+    this.noteForm.reset();
   }
 
   deleteClickEvent() {
@@ -109,15 +142,14 @@ export class NoteListComponent implements OnInit, DoCheck, AfterViewInit {
   }
 
   onDelete(value: Array<any>) {
-    if (!this.nameOnClick) {
-      value.splice(1, 1);
-    }
     value.map((val, index) => {
       if (val[0].name === this.nameOnClick) {
-        value[index].splice(1, 1);
+        value[index].splice(index, 1);
+        this.nameOnClick = 'Not available'
       }
       if (val[0].name === this.nameOnClick) {
         val.splice(index, 1);
+        this.nameOnClick = 'Not available'
       } else if (val[0].children[0] && val[0].name !== this.nameOnClick) {
         this.onDelete(val[0].children);
       }

@@ -2,7 +2,6 @@
     <h2>Add note</h2>
     <h3>Selected topic: <span>{{nameOnClick}}</span></h3>
     <div class="form-group">
-
         <label for="Name">Topic</label>
         <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
         <input type="text" formControlName="Name" class="form-control" placeholder="Name" required />
@@ -13,7 +12,7 @@
         <input type="text" formControlName="Description" class="form-control" placeholder="Description" required />
     </div>
     <div class="form-group">
-        <button (click)="save()">Save</button>
+        <button [disabled]="!noteForm.valid" (click)="save()">Save</button>
         <button (click)="clearTopicAndDescription()">Clear</button>
     </div>
 </form>
@@ -26,4 +25,3 @@
     <h3>List of topics</h3>
     <div></div>
 </div>
-<!--<button (click)="save('3', 'sddd')">Add</button>-->
